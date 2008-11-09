@@ -34,6 +34,10 @@ module Integrity
         def working_tree_path
           strip_extension(path).gsub("/", "-")
         end
+
+        def github?
+          @uri.to_s[/github.com/]
+        end
     
       private
     

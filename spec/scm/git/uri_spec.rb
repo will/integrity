@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) / "../../spec_helper"
+require File.dirname(__FILE__) +  '/../../spec_helper'
 
 module Integrity
   describe SCM::Git::URI do
@@ -29,10 +29,15 @@ module Integrity
     ]
     
     uris.each do |uri|
-      it "should parse the uri #{uri}" do
+      it "should parse the URI #{uri}" do
         git_url = to_git_uri(uri)
         git_url.working_tree_path.should == "path-to-repo"
       end
+    end
+
+    it 'should recognize github URIs' do
+      to_git_uri('git://github.com/foca/integrity').should be_github
+      to_git_uri('git@github.com:foca/integrity').should be_github
     end
   end
 end
