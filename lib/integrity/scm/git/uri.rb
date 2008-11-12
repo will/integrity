@@ -32,29 +32,42 @@ module Integrity
         end
     
         def working_tree_path
-          strip_extension(path).gsub("/", "-")
+          path_without_extension.gsub("/", "-")
         end
 
         def github?
-          @uri.to_s[/github.com/]
+          to_s[/github.com/]
         end
 
-        def github_username
-          return nil unless github?
-          path.split('/').first
-        end
-
-        def github_repository
-          return nil unless github?
-          path.split('/').last
+        def github_commit_uri(sha1)
+          "http://github.com/#{github_username}/#{github_repository}/commit/#{sha1}"
         end
 
         def to_s
           @uri.to_s
         end
-    
+
       private
-    
+
+        def path_without_extension
+          strip_extension(path)
+        end
+
+        def path
+          path = @uri.path
+          path.gsub(/\~[a-zA-Z0-9]*\//, "").gsub(/^\//, "")
+        end
+
+        def github_username
+          return nil unless github?
+          path_without_extension.split('/').first
+        end
+
+        def github_repository
+          return nil unless github?
+          path_without_extension.split('/').last
+        end
+
         def strip_extension(string)
           uri = Pathname.new(string)
           if uri.extname.any?
@@ -63,11 +76,6 @@ module Integrity
           else
             string
           end
-        end
-    
-        def path
-          path = @uri.path
-          path.gsub(/\~[a-zA-Z0-9]*\//, "").gsub(/^\//, "")
         end
       end
     end

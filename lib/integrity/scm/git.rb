@@ -27,7 +27,12 @@ module Integrity
 
       def commit_metadata(sha1)
         format  = %Q(---%n:author: %an <%ae>%n:message: >-%n  %s%n:date: %ci%n)
-        YAML.load(`cd #{working_directory} && git show -s --pretty=format:"#{format}" #{sha1}`)
+        meta_data = YAML.load(`cd #{working_directory} && git show -s --pretty=format:"#{format}" #{sha1}`)
+        if uri.github?
+          meta_data.update(:github_commit_uri => uri.github_commit_uri(sha1))
+        else
+          meta_data
+        end
       end
       
       private

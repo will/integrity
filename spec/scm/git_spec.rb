@@ -131,8 +131,15 @@ describe Integrity::SCM::Git do
     it "should return a hash with all the relevant information" do
       @git.commit_metadata("HEAD").should == {
         :author => "Nicolás Sanguinetti <contacto@nicolassanguinetti.info>",
-        :message => "A beautiful commit"
+        :message => "A beautiful commit",
+        :github_commit_uri => 'http://github.com/foca/integrity/commit/HEAD'
       }
+    end
+
+    it "should not try to get the github commit's URI if it isn't a github repository" do
+      @git.uri.stub!(:github?).and_return(false)
+      @git.uri.should_not_receive(:github_commit_uri)
+      @git.commit_metadata('HEAD')
     end
   end
 

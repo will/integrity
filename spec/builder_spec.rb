@@ -41,7 +41,7 @@ describe Integrity::Builder do
     end
   end
 
-  before do
+  before(:each) do
     Integrity.stub!(:config).and_return(:export_directory => "/var/integrity/exports")
     Integrity::Builder.class_eval { public :export_directory, :run_build_script }
     Integrity::SCM.stub!(:working_tree_path).and_return("foca-integrity")
