@@ -1,6 +1,6 @@
 %h1
   Built
-  &= @build.short_commit_identifier
+  = commit_url(@build)
   = @build.successful? ? "successfully" : "and failed"
 %blockquote
   %p&= @build.commit_message

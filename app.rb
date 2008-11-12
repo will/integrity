@@ -196,6 +196,14 @@ helpers do
     "/#{build.project.permalink}/builds/#{build.commit_identifier}"
   end
 
+  def commit_url(build)
+    if url = build.commit_github_url
+      %Q(<a href="#{url}">#{build.short_commit_identifier}</a>)
+    else
+      build.short_commit_identifier
+    end
+  end
+
   def filter_attributes_of(model)
     valid = model.properties.collect {|p| p.name.to_s }
     Hash[*params.dup.select {|k,_| valid.include?(k) }.flatten]

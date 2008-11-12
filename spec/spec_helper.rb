@@ -115,6 +115,7 @@ module AppSpecHelper
       :output => 'output',
       :project => @project,
       :commit_identifier => '9f6302002d2259c05a64767e0dedb15d280a4848',
+      :commit_github_url => nil,
       :commit_author => mock("author",
         :name  => 'Nicolás Sanguinetti',
         :email => 'contacto@nicolassanguinetti.info',

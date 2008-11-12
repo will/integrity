@@ -787,6 +787,21 @@ describe 'Web App' do
       end
     end
 
+    describe '#commit_url' do
+      it 'should return the short identifier of the commit if cant get an URI' do
+        @context.commit_url(mock_build).should == '9f6302'
+      end
+
+      it 'should return a link to the commit' do
+        build = mock_build
+        build.stub!(:commit_github_url).
+          and_return("http://github.com/foca/integrity/commit/#{build.commit_identifier}")
+        @context.commit_url(build).should == 
+          %Q(<a href="http://github.com/foca/integrity/commit/#{build.commit_identifier}">\
+#{build.short_commit_identifier}</a>)
+      end
+    end
+
     describe "#filter_attributes_of" do
       before do
         @context.stub!(:params).and_return("some" => "arguments", "are" => "better", "left" => "unspoken")

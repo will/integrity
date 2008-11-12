@@ -41,6 +41,10 @@ module Integrity
       commit_metadata[:message]
     end
 
+    def commit_github_url
+      commit_metadata[:github_commit_uri]
+    end
+
     def commited_at
       case commit_metadata[:date]
         when String then Time.parse(commit_metadata[:date])
