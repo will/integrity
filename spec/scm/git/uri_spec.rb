@@ -55,10 +55,12 @@ module Integrity
     describe 'with a github uri' do
       it 'should parse the github username' do
         to_git_uri('git://github.com/foca/integrity').github_username.should == 'foca'
+        to_git_uri('git@github.com:foca/integrity').github_username.should == 'foca'
       end
 
       it 'should parse the github repository' do
         to_git_uri('git://github.com/foca/integrity').github_repository.should == 'integrity'
+        to_git_uri('git@github.com:foca/integrity').github_repository.should == 'integrity'
       end
     end
   end
