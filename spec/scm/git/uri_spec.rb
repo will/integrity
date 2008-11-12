@@ -35,9 +35,31 @@ module Integrity
       end
     end
 
+    it 'should converts itselfs to a string' do
+      to_git_uri('git://example.org/repo.git').to_s.should == 'git://example.org/repo.git'
+    end
+
     it 'should recognize github URIs' do
       to_git_uri('git://github.com/foca/integrity').should be_github
       to_git_uri('git@github.com:foca/integrity').should be_github
+    end
+
+    specify 'github username should be nil for non-github uris' do
+      to_git_uri('git://example.org/repo.git').github_username.should be_nil
+    end
+
+    specify 'github repository should be nil for non-github uris' do
+      to_git_uri('git://example.org/repo.git').github_repository.should be_nil
+    end
+
+    describe 'with a github uri' do
+      it 'should parse the github username' do
+        to_git_uri('git://github.com/foca/integrity').github_username.should == 'foca'
+      end
+
+      it 'should parse the github repository' do
+        to_git_uri('git://github.com/foca/integrity').github_repository.should == 'integrity'
+      end
     end
   end
 end

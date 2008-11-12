@@ -10,7 +10,7 @@ module Integrity
       end
 
       def initialize(uri, branch, working_directory)
-        @uri = uri.to_s
+        @uri = Git::URI.new(uri.to_s)
         @branch = branch.to_s
         @working_directory = working_directory
       end

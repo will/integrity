@@ -38,6 +38,20 @@ module Integrity
         def github?
           @uri.to_s[/github.com/]
         end
+
+        def github_username
+          return nil unless github?
+          path.split('/').first
+        end
+
+        def github_repository
+          return nil unless github?
+          path.split('/').last
+        end
+
+        def to_s
+          @uri.to_s
+        end
     
       private
     

@@ -7,7 +7,11 @@ describe Integrity::SCM::Git do
   end
 
   it "should point to the correct repository" do
-    @git.uri.should == "git://github.com/foca/integrity.git"
+    @git.uri.to_s.should == "git://github.com/foca/integrity.git"
+  end
+
+  specify "repository URI should be a Git::URI" do
+    @git.uri.should be_an_instance_of(Integrity::SCM::Git::URI)
   end
 
   it "should track the correct branch" do
