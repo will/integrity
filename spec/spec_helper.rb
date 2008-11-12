@@ -1,6 +1,26 @@
 require File.dirname(__FILE__) + '/../lib/integrity'
 require 'spec'
 
+class Object
+  class Bypass
+    instance_methods.each do |m|
+      undef_method m unless m =~ /^__/
+    end
+
+    def initialize(ref)
+      @ref = ref
+    end
+
+    def method_missing(sym, *args)
+      @ref.__send__(sym, *args)
+    end
+  end
+
+  def bypass
+    Bypass.new(self)
+  end
+end
+
 module NotifierSpecHelper
   def mock_build(messages={})
     messages = {
