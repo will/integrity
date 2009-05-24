@@ -24,13 +24,14 @@ class MigrationsTest < Test::Unit::TestCase
 
   before(:each) do
     [Project, Build, Commit, Notifier].each(&:auto_migrate_down!)
+    database_adapter.execute("DROP TABLE migration_info")
     assert !table_exists?("migration_info") # just to be sure
   end
 
   test "upgrading a pre migration database" do
-    util_capture { Integrity.migrate_db }
+    capture_stdout { Integrity.migrate_db }
 
-    current_migrations.should == ["initial", "add_commits"]
+    current_migrations.should == ["initial", "add_commits", "add_enabled_column"]
     assert table_exists?("integrity_projects")
     assert table_exists?("integrity_builds")
     assert table_exists?("integrity_notifiers")
@@ -40,8 +41,8 @@ class MigrationsTest < Test::Unit::TestCase
   test "migrating data from initial to add_commits migration" do
     load_initial_migration_fixture
 
-    util_capture { Integrity.migrate_db }
-    current_migrations.should == ["initial", "add_commits"]
+    capture_stdout { Integrity.migrate_db }
+    current_migrations.should == ["initial", "add_commits", "add_enabled_column"]
 
     sinatra = Project.first(:name => "Sinatra")
     sinatra.should have(1).commits

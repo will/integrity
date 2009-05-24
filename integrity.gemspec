@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name    = "integrity"
-  s.version = "0.1.9.1"
-  s.date    = "2009-03-16"
+  s.version = "0.1.9.3"
+  s.date    = "2009-04-06"
 
   s.description = "Your Friendly Continuous Integration server. Easy, fun and painless!"
   s.summary     = "The easy and fun Continuous Integration server"
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "sinatra", [">= 0.9.1.1"]
   s.add_dependency "sinatra-authorization"
   s.add_dependency "haml",    [">= 2.0.0"]
-  s.add_dependency "data_mapper", [">= 0.9.10"]
+  s.add_dependency "data_mapper", ["= 0.9.11"]
   s.add_dependency "uuidtools"   # required by dm-types
   s.add_dependency "bcrypt-ruby" # required by dm-types
   s.add_dependency "json"
@@ -35,12 +35,15 @@ Gem::Specification.new do |s|
     s.add_development_dependency "dm-sweatshop"
     s.add_development_dependency "ParseTree" # required by dm-sweatshop
     s.add_development_dependency "jeremymcanally-context"
+    s.add_development_dependency "jeremymcanally-matchy"
     s.add_development_dependency "jeremymcanally-pending"
     s.add_development_dependency "foca-storyteller"
   end
 
   s.files = %w[
-README.markdown
+.gitignore
+CHANGES
+README.md
 Rakefile
 bin/integrity
 config/config.sample.ru
@@ -73,6 +76,8 @@ lib/integrity/notifier/test.rb
 lib/integrity/notifier/test/fixtures.rb
 lib/integrity/notifier/test/hpricot_matcher.rb
 lib/integrity/project.rb
+lib/integrity/project/notifiers.rb
+lib/integrity/project/push.rb
 lib/integrity/project_builder.rb
 lib/integrity/scm.rb
 lib/integrity/scm/git.rb
@@ -88,38 +93,35 @@ test/acceptance/create_project_test.rb
 test/acceptance/delete_project_test.rb
 test/acceptance/edit_project_test.rb
 test/acceptance/error_page_test.rb
-test/acceptance/helpers.rb
 test/acceptance/installer_test.rb
 test/acceptance/manual_build_project_test.rb
-test/acceptance/notifier_test.rb
+test/acceptance/not_found_page_test.rb
 test/acceptance/project_syndication_test.rb
 test/acceptance/stylesheet_test.rb
+test/acceptance/unauthorized_page_test.rb
 test/helpers.rb
 test/helpers/acceptance.rb
 test/helpers/acceptance/email_notifier.rb
 test/helpers/acceptance/git_helper.rb
+test/helpers/acceptance/notifier_helper.rb
 test/helpers/acceptance/textfile_notifier.rb
 test/helpers/expectations.rb
 test/helpers/expectations/be_a.rb
 test/helpers/expectations/change.rb
 test/helpers/expectations/have.rb
 test/helpers/expectations/predicates.rb
-test/helpers/fixtures.rb
 test/helpers/initial_migration_fixture.sql
 test/unit/build_test.rb
 test/unit/commit_test.rb
 test/unit/helpers_test.rb
 test/unit/integrity_test.rb
 test/unit/migrations_test.rb
+test/unit/notifier/base_test.rb
 test/unit/notifier/test_test.rb
 test/unit/notifier_test.rb
 test/unit/project_builder_test.rb
 test/unit/project_test.rb
 test/unit/scm_test.rb
-vendor/sinatra-ditties/README.rdoc
-vendor/sinatra-ditties/lib/sinatra/ditties.rb
-vendor/sinatra-ditties/lib/sinatra/ditties/authorization.rb
-vendor/sinatra-ditties/lib/sinatra/ditties/mailer.rb
 views/_commit_info.haml
 views/build.haml
 views/error.haml

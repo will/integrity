@@ -2,7 +2,7 @@ module Integrity
   module Helpers
     module Urls
       def root_url
-        @url ||= Addressable::URI.parse(Integrity.config[:base_uri])
+        @url ||= Addressable::URI.parse(base_url)
       end
 
       def root_path(path="")
@@ -26,12 +26,12 @@ module Integrity
       end
 
       def build_path(build, *path)
-        warn "#build_path is deprecated, use #commit_path instead"
+        warn "#build_path is deprecated, use #commit_path instead (#{caller[0]})"
         commit_path build.commit, *path
       end
 
       def build_url(build)
-        warn "#build_url is deprecated, use #commit_url instead"
+        warn "#build_url is deprecated, use #commit_url instead (#{caller[0]})"
         commit_url build.commit
       end
 
@@ -48,6 +48,11 @@ module Integrity
       private
         def url(path="")
           root_url.dup.tap { |url| url.path = root_url.path + path }
+        end
+
+        def base_url
+          Integrity.config[:base_uri] || ((respond_to?(:request) &&
+            request.respond_to?(:url)) ? request.url : fail("set base_uri"))
         end
     end
   end

@@ -1,27 +1,24 @@
 $:.unshift File.dirname(__FILE__) + "/../lib", File.dirname(__FILE__)
 
-%w(test/unit
-context
-pending
-matchy
-storyteller
-webrat/sinatra
-rr
-mocha
-dm-sweatshop).each { |dependency|
-  begin
-    require dependency
-  rescue LoadError => e
-    puts "You're missing some gems required to run the tests."
-    puts "Please run `rake test:install_dependencies`"
-    puts "You'll probably need to run that command as root or with sudo."
+require "rubygems"
 
-    puts "Thanks :)"
-    puts
+require "test/unit"
+require "rr"
+require "mocha"
+require "dm-sweatshop"
+require "webrat/sinatra"
 
-    raise
-  end
-}
+gem "jeremymcanally-context"
+gem "jeremymcanally-matchy"
+gem "jeremymcanally-pending"
+require "context"
+require "matchy"
+require "pending"
+
+require "integrity"
+require "integrity/notifier/test/fixtures"
+
+require "helpers/expectations"
 
 begin
   require "ruby-debug"
@@ -29,21 +26,24 @@ begin
 rescue LoadError
 end
 
-require "integrity"
-require "helpers/expectations"
-require "integrity/notifier/test/fixtures"
-
 module TestHelper
   def ignore_logs!
     Integrity.config[:log] = "/tmp/integrity.test.log"
   end
 
-  def util_capture
+  def capture_stdout
     output = StringIO.new
     $stdout = output
     yield
     $stdout = STDOUT
     output
+  end
+
+  def silence_warnings
+    $VERBOSE, v = nil, $VERBOSE
+    yield
+  ensure
+    $VERBOSE = v
   end
 end
 
@@ -58,29 +58,25 @@ class Test::Unit::TestCase
 
   before(:all) do
     DataMapper.setup(:default, "sqlite3::memory:")
+
+    require "integrity/migrations"
   end
 
   before(:each) do
+    [Project, Build, Commit, Notifier].each(&:auto_migrate_down!)
+    capture_stdout { Integrity.migrate_db }
+
     RR.reset
-    DataMapper.auto_migrate!
-    Integrity.instance_variable_set(:@config, nil)
+
     Notifier.available.each { |n|
       Notifier.send(:remove_const, n.to_s.split(":").last.to_sym)
     }
 
-    repository(:default) do
-      transaction = DataMapper::Transaction.new(repository)
-      transaction.begin
-      repository.adapter.push_transaction(transaction)
-    end
+    Notifier.available.clear
+    Integrity.instance_variable_set(:@config, nil)
   end
 
   after(:each) do
-    repository(:default) do
-      while repository.adapter.current_transaction
-        repository.adapter.current_transaction.rollback
-        repository.adapter.pop_transaction
-      end
-    end
+    capture_stdout { Integrity::Migrations.migrate_down! }
   end
 end

@@ -16,20 +16,12 @@ module Integrity
 
       if options[:heroku]
         cp_r Pathname(__FILE__).join("../../../config/heroku"), root
-        puts <<EOF
-Your Integrity install is ready to be deployed onto Heroku. Next steps:
-
-  1. git init && git add . && git commit -am "Initial import"
-  2. heroku create
-  3. git push heroku master
-  4. heroku rake db:migrate
-EOF
+        puts post_heroku_install_message
       else
         create_dir_structure
         copy_template_files
         edit_template_files
-        migrate_db(root.join("config.yml"))
-        after_setup_message
+        puts post_install_message
       end
     end
 
@@ -50,11 +42,9 @@ EOF
       require "thin"
       require "do_sqlite3"
 
-      if File.file?(options[:config].to_s)
-        Integrity.new(options[:config])
-      else
-        DataMapper.setup(:default, "sqlite3::memory:")
-      end
+      File.file?(options[:config].to_s) ?
+        Integrity.new(options[:config]) : Integrity.new
+      Integrity.config[:base_uri] = "http://0.0.0.0:#{options[:port]}"
 
       DataMapper.auto_migrate!
 
@@ -104,10 +94,26 @@ EOF
         File.open(root / "thin.yml", 'w') { |f| f.puts config }
       end
 
-      def after_setup_message
-        puts <<EOF
+      def post_heroku_install_message
+        <<EOF
+Your Integrity install is ready to be deployed onto Heroku. Next steps:
+
+  1. git init && git add . && git commit -am "Initial import"
+  2. heroku create
+  3. git push heroku master
+  4. heroku rake db:migrate
+EOF
+      end
+
+      def post_install_message
+        <<EOF
 Awesome! Integrity was installed successfully!
 
+To complete the installation, please configure the `database_uri` in
+#{root.join("config.yml")} and install the matching DataMapper adapter if
+necessary. Then, run `integrity migrate_db #{root.join("config.yml")}
+
+== Notifiers
 If you want to enable notifiers, install the gems and then require them
 in #{root}/config.ru
 

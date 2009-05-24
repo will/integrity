@@ -30,9 +30,14 @@ require "integrity/helpers"
 require "integrity/app"
 
 module Integrity
-  def self.new(config_file = nil)
-    self.config = YAML.load_file(config_file) unless config_file.nil?
-    DataMapper.setup(:default, config[:database_uri])
+  def self.new(config=nil)
+    if config.is_a?(String) && File.file?(config)
+      self.config = YAML.load_file(config)
+    elsif config.is_a?(Hash)
+      self.config = config
+    end
+
+    DataMapper.setup(:default, self.config[:database_uri])
   end
 
   def self.default_configuration
@@ -64,9 +69,9 @@ module Integrity
   end
   private_class_method :logger
 
-    class LogFormatter < Logger::Formatter
-      def call(severity, time, progname, msg)
-        time.strftime("[%H:%M:%S] ") + msg2str(msg) + "\n"
-      end
+  class LogFormatter < Logger::Formatter
+    def call(severity, time, progname, msg)
+      time.strftime("[%H:%M:%S] ") + msg2str(msg) + "\n"
     end
+  end
 end

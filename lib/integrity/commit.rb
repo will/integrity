@@ -10,15 +10,19 @@ module Integrity
     property :created_at,   DateTime
     property :updated_at,   DateTime
 
-    has 1,     :build,   :class_name => "Integrity::Build", :order => [:created_at.desc]
-    belongs_to :project, :class_name => "Integrity::Project"
+    has 1,     :build,   :class_name => "Integrity::Build",
+                         :order => [:created_at.desc]
+
+    belongs_to :project, :class_name => "Integrity::Project",
+                         :child_key => [:project_id]
 
     def message
       attribute_get(:message) || "<Commit message not loaded>"
     end
 
     def author
-      attribute_get(:author) || Author.load('<Commit author not loaded> <<Commit author not loaded>>', :author)
+      attribute_get(:author) ||
+        Author.load('<Commit author not loaded> <<Commit author not loaded>>', :author)
     end
 
     def short_identifier
@@ -52,20 +56,5 @@ module Integrity
     def output
       build && build.output
     end
-
-    def queue_build
-      self.build = Build.create(:commit_id => id)
-      self.save
-
-      # Build on foreground (this will move away, I promise)
-      ProjectBuilder.new(project).build(self)
-    end
-
-    # Deprecation layer
-    alias :short_commit_identifier :short_identifier
-    alias :commit_identifier       :identifier
-    alias :commit_author           :author
-    alias :commit_message          :message
-    alias :commited_at             :committed_at
   end
 end

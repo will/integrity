@@ -1,3 +1,8 @@
+require File.dirname(__FILE__) + "/../helpers"
+
+gem "foca-storyteller"
+require "storyteller"
+
 require "helpers/acceptance/git_helper"
 
 module AcceptanceHelper

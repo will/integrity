@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/helpers"
+require File.dirname(__FILE__) + "/../helpers/acceptance"
 
 class BrowsePublicProjectsTest < Test::Unit::AcceptanceTestCase
   story <<-EOS
@@ -48,6 +48,10 @@ class BrowsePublicProjectsTest < Test::Unit::AcceptanceTestCase
     click_link "My Test Project"
 
     assert_have_tag("h1", :content => "My Test Project")
+
+    # He can then go back to the project listing
+    click_link "projects"
+    assert_have_tag("a", :content => "My Test Project")
   end
 
   scenario "a user gets a 404 when browsing to an unexisting project" do

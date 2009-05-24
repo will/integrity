@@ -32,6 +32,8 @@ class CommitTest < Test::Unit::TestCase
       commit.author.name.should == "Nicolás Sanguinetti"
       commit.author.email.should == "contacto@nicolassanguinetti.info"
       commit.author.full.should == "Nicolás Sanguinetti <contacto@nicolassanguinetti.info>"
+
+      Commit.gen(:author => nil).author.to_s.should =~ /not loaded/
     end
 
     it "raises ArgumentError with invalid author" do
@@ -41,6 +43,8 @@ class CommitTest < Test::Unit::TestCase
     it "has a commit message" do
       commit = Commit.gen(:message => "This commit rocks")
       commit.message.should == "This commit rocks"
+
+      Commit.gen(:message => nil).message.should =~ /not loaded/
     end
 
     it "has a commit date" do
@@ -57,27 +61,6 @@ class CommitTest < Test::Unit::TestCase
 
       commit = Commit.gen(:pending, :identifier => "658ba96cb0235e82ee720510c049883955200fa9")
       commit.human_readable_status.should be("658ba96 hasn't been built yet")
-    end
-  end
-
-  describe "Queueing a build" do
-    before(:each) do
-      @commit = Commit.gen
-      stub.instance_of(ProjectBuilder).build(@commit)
-    end
-
-    it "creates an empty Build" do
-      @commit.build.should be_nil
-      @commit.queue_build
-      @commit.build.should_not be_nil
-    end
-
-    it "ensures the build is saved" do
-      @commit.build.should be_nil
-      @commit.queue_build
-
-      commit = Commit.first(:identifier => @commit.identifier)
-      commit.build.should_not be_nil
     end
   end
 end

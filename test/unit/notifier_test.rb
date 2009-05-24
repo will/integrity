@@ -66,58 +66,32 @@ class NotifierTest < Test::Unit::TestCase
     end
   end
 
-  it "knows which notifiers are available" do
-    Notifier.gen(:irc)
-    Notifier.gen(:twitter)
-    Notifier.should have(2).available
-    Notifier.available.should include(Integrity::Notifier::IRC)
-    Notifier.available.should include(Integrity::Notifier::Twitter)
+  describe "Registering a notifier" do
+    it "registers given notifier class" do
+      load "helpers/acceptance/textfile_notifier.rb"
+
+      Notifier.register(Integrity::Notifier::Textfile)
+
+      assert_equal Integrity::Notifier::Textfile,
+        Notifier.available["Textfile"]
+    end
+
+    it "raises ArgumentError if given class is not a valid notifier" do
+      assert_raise(ArgumentError) {
+        Notifier.register(Class.new)
+      }
+
+      assert Notifier.available.empty?
+    end
   end
 
   it "knows how to notify the world of a build" do
-    irc   = Notifier.generate(:irc)
-    build = Integrity::Build.generate
-    Notifier::IRC.expects(:notify_of_build).with(build, irc.config)
+    irc   = Notifier.gen(:irc)
+    Notifier.register(Integrity::Notifier::IRC)
+    build = Build.gen
+
+    mock(Notifier::IRC).notify_of_build(build, irc.config) { nil }
+
     irc.notify_of_build(build)
-  end
-
-  describe "Enabling a list of notifiers for a project" do
-    it "creates new notifiers for the project" do
-      project = Project.generate
-      lambda do
-        project.enable_notifiers(["IRC", "Twitter"],
-          {"IRC" => {"uri" => "irc://irc.freenode.net/integrity"},
-           "Twitter" => {"username" => "john"}})
-      end.should change(project.notifiers, :count).from(0).to(2)
-    end
-
-    it "deletes all of previous notifiers" do
-      project = Project.generate(:notifiers => [Notifier.gen(:irc), Notifier.gen(:twitter)])
-      lambda do
-        project.enable_notifiers("IRC", {"IRC" => {:foo => "bar"}})
-        project.reload
-      end.should change(project.notifiers, :count).from(2).to(1)
-    end
-
-    it "does nothing if given nil as the list of notifiers to enable" do
-      lambda { Project.gen.enable_notifiers(nil, {}) }.should_not change(Notifier, :count)
-    end
-
-    it "doesn't destroy any of the other notifiers that exist for other projects" do
-      irc = Notifier.generate(:irc)
-
-      project = Project.gen
-      project.enable_notifiers("IRC", {"IRC" => irc.config})
-
-      lambda do
-        Project.gen.enable_notifiers("IRC", {"IRC" => irc.config})
-      end.should_not change(project.notifiers, :count)
-    end
-  end
-
-  it "requires notifier classes to implement Notifier.to_haml and Notifier#deliver!" do
-    class Blah < Notifier::Base; end
-    lambda { Blah.to_haml }.should raise_error(NoMethodError)
-    lambda { Blah.new(Build.gen, {}).deliver! }.should raise_error(NoMethodError)
   end
 end

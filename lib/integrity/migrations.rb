@@ -84,8 +84,8 @@ module Integrity
         create_table :integrity_commits do
           column :id,           Integer,  :serial => true
           column :identifier,   String,   :nullable => false
-          column :message,      String,   :nullable => false, :length => 255
-          column :author,       String,   :nullable => false, :length => 255
+          column :message,      String,   :nullable => true, :length => 255
+          column :author,       String,   :nullable => true, :length => 255
           column :committed_at, DateTime, :nullable => false
           column :created_at,  DateTime
           column :updated_at,  DateTime
@@ -134,6 +134,17 @@ module Integrity
                        :successful   => build.successful,
                        :output       => build.output)
         end
+      end
+    end
+
+    migration 3, :add_enabled_column do
+      up do
+        modify_table(:integrity_notifiers) { add_column :enabled, Boolean }
+      end
+
+      down do
+        # TODO: sqlite doesn't support DROP COLUMN ...
+        # modify_table(:integrity_notifiers) { drop_column :enabled }
       end
     end
   end
