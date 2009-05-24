@@ -17,7 +17,7 @@ module Integrity
 
     def initialize(project)
       @project = project
-      @scm = SCM.new(uri, branch, export_directory)
+      @scm     = SCM.new(uri, branch, export_directory)
     end
 
     def build(commit)
@@ -39,7 +39,7 @@ module Integrity
     ensure
       build.complete!
       commit.update_attributes(scm.info(commit.identifier) || {})
-      project.notifiers.each { |notifier| notifier.notify_of_build(build) }
+      project.enabled_notifiers.each { |notifier| notifier.notify_of_build(build) }
     end
 
     def delete_code

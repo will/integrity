@@ -145,22 +145,17 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
 
-  describe "Finding public or private projects" do
+  describe "Finding any project" do
     before(:each) do
-      @public_project = Project.gen(:public => true)
-      @private_project = Project.gen(:public => false)
+      @rails   = Project.gen(:name => "rails",   :public => true)
+      @merb    = Project.gen(:name => "merb",    :public => true)
+      @sinatra = Project.gen(:name => "sinatra", :public => true)
+      @camping = Project.gen(:name => "camping", :public => false)
     end
 
-    it "finds only public projects if the condition passed is false" do
-      projects = Project.only_public_unless(false)
-      projects.should_not include(@private_project)
-      projects.should include(@public_project)
-    end
-
-    it "finds both private and public projects if the condition passed is true" do
-      projects = Project.only_public_unless(true)
-      projects.should include(@private_project)
-      projects.should include(@public_project)
+    it "should always be ordered by name" do
+      Project.all.should == [@camping, @merb, @rails, @sinatra]
+      Project.all(:public => true).should == [@merb, @rails, @sinatra]
     end
   end
 
@@ -231,8 +226,10 @@ class ProjectTest < Test::Unit::TestCase
 
       assert_equal 2,         Notifier.count
       assert_equal 2,         project.enabled_notifiers.count
-      assert_equal "IRC",     project.notifiers.first.name
-      assert_equal "Twitter", project.notifiers.last.name
+
+      notifier_names = project.notifiers.map { |n| n.name }
+      assert notifier_names.include?("IRC")
+      assert notifier_names.include?("Twitter")
 
       project.update_notifiers(["Twitter"],
           {"IRC"     => {"uri" => "irc://irc.freenode.net/integrity"},

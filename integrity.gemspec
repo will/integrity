@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name    = "integrity"
-  s.version = "0.1.9.3"
-  s.date    = "2009-04-06"
+  s.version = "0.1.10"
+  s.date    = "2009-05-14"
 
   s.description = "Your Friendly Continuous Integration server. Easy, fun and painless!"
   s.summary     = "The easy and fun Continuous Integration server"
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.has_rdoc          = false
   s.rubygems_version  = "1.3.1"
 
-  s.add_dependency "sinatra", [">= 0.9.1.1"]
+  s.add_dependency "sinatra", ["= 0.9.1.1"]
   s.add_dependency "sinatra-authorization"
   s.add_dependency "haml",    [">= 2.0.0"]
   s.add_dependency "data_mapper", ["= 0.9.11"]
@@ -42,7 +42,9 @@ Gem::Specification.new do |s|
 
   s.files = %w[
 .gitignore
+AUTHORS
 CHANGES
+LICENSE
 README.md
 Rakefile
 bin/integrity
@@ -63,7 +65,6 @@ lib/integrity/core_ext/object.rb
 lib/integrity/helpers.rb
 lib/integrity/helpers/authorization.rb
 lib/integrity/helpers/breadcrumbs.rb
-lib/integrity/helpers/forms.rb
 lib/integrity/helpers/pretty_output.rb
 lib/integrity/helpers/rendering.rb
 lib/integrity/helpers/resources.rb
@@ -96,6 +97,7 @@ test/acceptance/error_page_test.rb
 test/acceptance/installer_test.rb
 test/acceptance/manual_build_project_test.rb
 test/acceptance/not_found_page_test.rb
+test/acceptance/notifier_test_test.rb
 test/acceptance/project_syndication_test.rb
 test/acceptance/stylesheet_test.rb
 test/acceptance/unauthorized_page_test.rb
@@ -117,7 +119,6 @@ test/unit/helpers_test.rb
 test/unit/integrity_test.rb
 test/unit/migrations_test.rb
 test/unit/notifier/base_test.rb
-test/unit/notifier/test_test.rb
 test/unit/notifier_test.rb
 test/unit/project_builder_test.rb
 test/unit/project_test.rb
