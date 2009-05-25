@@ -243,7 +243,7 @@ a
         :background = !content_bg - #080808
       &.building
         :background transparent url(/spinner.gif) no-repeat scroll right
-      a
+      a.project
         :font-size 2em
         :padding .25em
         :line-height 1.2
@@ -267,6 +267,23 @@ a
       &.failed .meta
         :color = !failed_color
 
+      .history
+        :text-align left
+        a
+          :display table-cell
+          :width 1em
+          :height 1em
+          &.success
+            :border = 2px solid !success_color
+            :background-color = !success_bg
+            &:hover
+              :background-color = !success_bg + #222
+          &.failed
+            :border = 2px solid !failed_color
+            :background-color = !failed_bg
+            &:hover
+              :background-color = !failed_bg + #222
+            
 
   #previous_builds
     li

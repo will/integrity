@@ -9,7 +9,7 @@
   %ul#projects
     - @projects.each do |project|
       %li{ :class => cycle("even", "odd") + ' ' + project.status.to_s }
-        %a{ :href => project_path(project) }&= project.name
+        %a.project{ :href => project_path(project) }&= project.name
         .meta
           - if project.building?
             Building!
@@ -17,5 +17,9 @@
             Never built yet
           - else
             = project.human_readable_status
+          %ul.history
+            - project.previous_commits[0..8].each do |commit|
+              %a{:class => commit.status, :href => commit_path(commit)}
+
   %p#new
     %a{ :href => root_path("/new") } Add a new project
